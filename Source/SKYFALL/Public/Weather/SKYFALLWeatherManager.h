@@ -63,6 +63,7 @@ private:
     float SecondsAccumulator = 0.0f;
     float HoursUntilTransition = 4.0f;
     float HoursUntilDisaster = -1.0f;
+    ESKYFALLWeatherType PendingDisasterWeather = ESKYFALLWeatherType::Thunderstorm;
 
     void AdvanceGameTime(float GameHours);
     void ChooseNextWeather();
