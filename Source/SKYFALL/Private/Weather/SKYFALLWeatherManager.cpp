@@ -48,6 +48,7 @@ void ASKYFALLWeatherManager::Tick(float DeltaSeconds)
         if (HoursUntilDisaster <= 0.0f)
         {
             HoursUntilDisaster = -1.0f;
+            CurrentSnapshot.Weather = PendingDisasterWeather;
             CurrentSnapshot.bDisasterWarning = false;
             UpdateWeatherProperties();
             OnWeatherChanged.Broadcast(CurrentSnapshot);
@@ -124,6 +125,7 @@ void ASKYFALLWeatherManager::ChooseNextWeather()
             case ESKYFALLClimateZone::Coastal: Next = ESKYFALLWeatherType::Thunderstorm; break;
             default: Next = FMath::FRand() < 0.5f ? ESKYFALLWeatherType::Thunderstorm : ESKYFALLWeatherType::Hail; break;
         }
+        PendingDisasterWeather = Next;
         CurrentSnapshot.bDisasterWarning = true;
         HoursUntilDisaster = FMath::Max(0.1f, DisasterWarningHours);
         OnDisasterWarning.Broadcast(Next, FMath::RoundToInt(DisasterWarningHours * 60.0f));
@@ -158,7 +160,10 @@ void ASKYFALLWeatherManager::ChooseNextWeather()
         }
     }
 
-    CurrentSnapshot.Weather = Next;
+    if (HoursUntilDisaster < 0.0f)
+    {
+        CurrentSnapshot.Weather = Next;
+    }
     UpdateWeatherProperties();
     OnWeatherChanged.Broadcast(CurrentSnapshot);
 }
